@@ -1,6 +1,12 @@
 <template>
-  <div>
-    <h1 class="underline">moon</h1>
+  <UApp>
+    <NuxtLoadingIndicator />
+    <h1 class="underline">
+      <NuxtLink to="/">Movies</NuxtLink>
+    </h1>
     <Icon name="lucide:moon" />
-  </div>
+    <NuxtPage />
+  </UApp>
 </template>
+
+<script setup="ts"></script>
