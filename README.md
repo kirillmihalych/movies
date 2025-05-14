@@ -1,6 +1,1 @@
-- [ ] Nuxt 3
-- [ ] Tailwind
-- [ ] Iconify
-- [ ] Pinia
-- [ ] TS
-- [ ] PWA
+# Movies

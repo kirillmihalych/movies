@@ -22,5 +22,11 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@vite-pwa/nuxt',
     '@vueuse/nuxt',
+    '@nuxt/ui',
   ],
+  runtimeConfig: {
+    public: {
+      apiKey: '',
+    },
+  },
 });
