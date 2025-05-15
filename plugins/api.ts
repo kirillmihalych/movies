@@ -5,6 +5,8 @@ export default defineNuxtPlugin({
       headers: {
         Authorization: useRuntimeConfig().public.apiKey,
       },
+      retry: 3,
+      retryDelay: 500,
     });
 
     return {
