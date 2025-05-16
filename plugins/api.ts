@@ -1,5 +1,7 @@
 export default defineNuxtPlugin({
   setup() {
+    const apiAbortController = ref<AbortController | null>(null);
+
     const apiFetcher = $fetch.create({
       baseURL: useRuntimeConfig().public.apiBase,
       headers: {
@@ -12,6 +14,7 @@ export default defineNuxtPlugin({
     return {
       provide: {
         apiFetcher,
+        apiAbortController,
       },
     };
   },

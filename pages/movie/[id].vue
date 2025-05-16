@@ -14,7 +14,7 @@ const {
   pending,
   error,
   data: movie,
-} = await useAsyncData(() =>
+} = await useAsyncData(`movie:${id}`, () =>
   moviesRepo($apiFetcher).getMovieDetails(id as string)
 );
 </script>
