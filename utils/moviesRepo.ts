@@ -18,14 +18,15 @@ export const moviesRepo = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
   const { $apiAbortController } = useNuxtApp();
 
   async function getMovies(page: number): Promise<IResult> {
-    return fetch(
-      `/discover/movie?include_adult=false&include_video=false&language=en-US&sort_by=popularity.desc`,
-      {
-        params: {
-          page,
-        },
-      }
-    );
+    const sort_by = 'popularity.desc';
+    const language = 'en-US';
+    return fetch(`/discover/movie`, {
+      params: {
+        sort_by,
+        language,
+        page,
+      },
+    });
   }
 
   async function getMovieDetails(movie_id: string): Promise<IMovie> {

@@ -1,8 +1,12 @@
 <!-- eslint-disable vue/html-self-closing -->
 <template>
   <div>
-    <p>{{ page }}</p>
-    <UPagination v-model:page="page" :sibling-count="2" :total="100" />
+    <UPagination
+      :default-page="reactivePage"
+      :sibling-count="2"
+      :total="100"
+      :to="to"
+    />
     <div v-if="pending">Loading...</div>
     <div v-else-if="error">{{ error }}</div>
     <div v-else-if="movies">
@@ -25,10 +29,21 @@
 </template>
 
 <script setup lang="ts">
+const route = useRoute();
+const reactivePage = computed(() => Number(route.query.page));
+
+function to(page: number) {
+  return {
+    query: {
+      page,
+    },
+  };
+}
+
 const { $apiFetcher } = useNuxtApp();
-const page = ref(1);
 const img = 'https://image.tmdb.org/t/p/';
 const imgSize = 'w185';
+
 
 const {
   pending,
@@ -36,11 +51,9 @@ const {
   data: movies,
 } = await useAsyncData(
   'movies',
-  async () => {
-    return moviesRepo($apiFetcher).getMovies(page.value);
-  },
+  async () => moviesRepo($apiFetcher).getMovies(reactivePage.value),
   {
-    watch: [page],
+    watch: [reactivePage],
   }
 );
 </script>
