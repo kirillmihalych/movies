@@ -20,6 +20,7 @@ export const moviesRepo = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
   async function getMovies(page: number): Promise<IResult> {
     const sort_by = 'popularity.desc';
     const language = 'en-US';
+    console.log(page);
     return fetch(`/discover/movie`, {
       params: {
         sort_by,

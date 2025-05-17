@@ -30,7 +30,9 @@
 
 <script setup lang="ts">
 const route = useRoute();
-const reactivePage = computed(() => Number(route.query.page));
+const reactivePage = computed(() => {
+  return route.query.page ? Number(route.query.page) : 1;
+});
 
 function to(page: number) {
   return {
@@ -43,7 +45,6 @@ function to(page: number) {
 const { $apiFetcher } = useNuxtApp();
 const img = 'https://image.tmdb.org/t/p/';
 const imgSize = 'w185';
-
 
 const {
   pending,
