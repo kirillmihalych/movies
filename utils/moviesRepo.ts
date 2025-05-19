@@ -19,8 +19,7 @@ export const moviesRepo = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
 
   async function getMovies(page: number): Promise<IResult> {
     const sort_by = 'popularity.desc';
-    const language = 'en-US';
-    console.log(page);
+    const language = 'ru-RU';
     return fetch(`/discover/movie`, {
       params: {
         sort_by,
@@ -30,7 +29,7 @@ export const moviesRepo = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
     });
   }
 
-  async function getMovieDetails(movie_id: string): Promise<IMovie> {
+  async function getMovieDetails(movie_id: number | string): Promise<IMovie> {
     if ($apiAbortController.value) {
       $apiAbortController.value.abort();
     }

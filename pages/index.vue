@@ -10,13 +10,14 @@
     <div v-if="pending">Loading...</div>
     <div v-else-if="error">{{ error }}</div>
     <div v-else-if="movies">
-      <ul class="flex flex-wrap">
+      <ul class="flex flex-wrap gap-2">
         <li v-for="movie in movies.results" :key="movie.id">
           <NuxtLink :to="{ name: 'movie-id', params: { id: movie.id } }">
             <NuxtImg
-              width="50px"
+              width="185px"
               :src="img + imgSize + movie.poster_path"
               alt=""
+              loading="lazy"
             />
             <h3>{{ movie.title }}</h3>
             <p>{{ movie.vote_average.toFixed(1) }}</p>
