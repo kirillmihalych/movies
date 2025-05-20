@@ -9,22 +9,39 @@ interface IMovie {
   backdrop_path: string;
 }
 
+interface IGenre {
+  id: number;
+  name: string;
+}
+
+interface IGenres {
+  genres: IGenre[];
+}
+
+interface ISelectItem {
+  label: string;
+  value: string;
+}
+
 interface IResult {
   page: number;
   results: IMovie[];
 }
 
+const language = 'ru-RU';
+
 export const moviesRepo = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
   const { $apiAbortController } = useNuxtApp();
 
-  async function getMovies(page: number): Promise<IResult> {
+  async function getMovies(page: number, genre: string): Promise<IResult> {
     const sort_by = 'popularity.desc';
-    const language = 'ru-RU';
+    const with_genres = genre;
     return fetch(`/discover/movie`, {
       params: {
         sort_by,
         language,
         page,
+        with_genres,
       },
     });
   }
@@ -41,8 +58,21 @@ export const moviesRepo = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
     });
   }
 
+  async function getGenreList(): Promise<ISelectItem[]> {
+    const data: IGenres = await fetch('genre/movie/list', {
+      params: {
+        language,
+      },
+    });
+    return data.genres.map((genre) => ({
+      label: genre.name,
+      value: String(genre.id),
+    }));
+  }
+
   return {
     getMovies,
     getMovieDetails,
+    getGenreList,
   };
 };
