@@ -2,26 +2,46 @@
 <template>
   <div>
     <UPagination
-      :default-page="reactivePage"
+      :page="page"
       :sibling-count="2"
       :total="100"
       :to="to"
+      variant="ghost"
     />
     <div v-if="pending">Loading...</div>
     <div v-else-if="error">{{ error }}</div>
-    <div v-else-if="movies">
-      <ul class="flex flex-wrap gap-2">
-        <li v-for="movie in movies.results" :key="movie.id">
+    <div v-else-if="data">
+      <USelect
+        v-model="genre"
+        :items="data.genres"
+        placeholder="Жанр"
+        :ui="{
+          trailingIcon:
+            'group-data-[state=open]:rotate-180 transition-transform duration-200',
+        }"
+        class="w-48"
+      />
+      <ul
+        class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-10 gap-4 px-2 py-4"
+      >
+        <li v-for="movie in data.movies.results" :key="movie.id">
           <NuxtLink :to="{ name: 'movie-id', params: { id: movie.id } }">
-            <NuxtImg
-              width="185px"
+            <img
               :src="img + imgSize + movie.poster_path"
-              alt=""
+              :alt="movie.title"
               loading="lazy"
+              class="aspect-[1/1.5]"
             />
-            <h3>{{ movie.title }}</h3>
-            <p>{{ movie.vote_average.toFixed(1) }}</p>
-            <p>{{ movie.release_date.slice(0, 4) }}</p>
+            <div class="p-1 opacity-75">
+              <div class="flex justify-between items-center text-xs">
+                <div class="flex items-center gap-1">
+                  <Icon name="lucide:star" />
+                  <span>{{ movie.vote_average.toFixed(1) }}</span>
+                </div>
+                <p>{{ movie.release_date.slice(0, 4) }}</p>
+              </div>
+              <h3 class="text-sm">{{ movie.title }}</h3>
+            </div>
           </NuxtLink>
         </li>
       </ul>
@@ -30,32 +50,39 @@
 </template>
 
 <script setup lang="ts">
-const route = useRoute();
-const reactivePage = computed(() => {
-  return route.query.page ? Number(route.query.page) : 1;
-});
+import { useRouteQuery } from '@vueuse/router';
 
+const page = useRouteQuery('page', '1', { transform: Number });
 function to(page: number) {
   return {
     query: {
       page,
+      genre: genre.value,
     },
   };
 }
+
+const genre = useRouteQuery('genre', '', { transform: String });
+watch(genre, () => {
+  page.value = 1;
+});
 
 const { $apiFetcher } = useNuxtApp();
 const img = 'https://image.tmdb.org/t/p/';
 const imgSize = 'w185';
 
-const {
-  pending,
-  error,
-  data: movies,
-} = await useAsyncData(
+const { pending, error, data } = await useAsyncData(
   'movies',
-  async () => moviesRepo($apiFetcher).getMovies(reactivePage.value),
+  async () => {
+    const [movies, genres] = await Promise.all([
+      moviesRepo($apiFetcher).getMovies(page.value, genre.value),
+      moviesRepo($apiFetcher).getGenreList(),
+    ]);
+
+    return { movies, genres };
+  },
   {
-    watch: [reactivePage],
+    watch: [page, genre],
   }
 );
 </script>
