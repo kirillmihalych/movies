@@ -11,9 +11,11 @@
     <div v-if="pending">Loading...</div>
     <div v-else-if="error">{{ error }}</div>
     <div v-else-if="data">
-      <USelect
-        v-model="genre"
+      <UButton @click="resetFilters">Сбросить фильтры</UButton>
+      <USelectMenu
+        v-model="genreList"
         :items="data.genres"
+        multiple
         placeholder="Жанр"
         :ui="{
           trailingIcon:
@@ -51,21 +53,22 @@
 
 <script setup lang="ts">
 import { useRouteQuery } from '@vueuse/router';
+import type { ISelectItem } from '#imports';
+
+const router = useRouter();
 
 const page = useRouteQuery('page', '1', { transform: Number });
+
 function to(page: number) {
   return {
     query: {
       page,
-      genre: genre.value,
     },
   };
 }
 
 const genre = useRouteQuery('genre', '', { transform: String });
-watch(genre, () => {
-  page.value = 1;
-});
+const genreList = ref<ISelectItem[]>([]);
 
 const { $apiFetcher } = useNuxtApp();
 const img = 'https://image.tmdb.org/t/p/';
@@ -85,4 +88,27 @@ const { pending, error, data } = await useAsyncData(
     watch: [page, genre],
   }
 );
+
+watch(
+  genreList,
+  () => {
+    genre.value = genreList.value.map((genre) => genre.value).toString();
+    page.value = 1;
+
+    // если лист жанров пустой, но в query есть жанры
+    // то берём жанры из query
+    if (!genreList.value.length && genre.value) {
+      const queryParams = genre.value.split(',');
+      genreList.value = data.value?.genres.filter((genre) =>
+        queryParams.includes(genre.value)
+      ) as ISelectItem[];
+    }
+  },
+  { immediate: true }
+);
+
+function resetFilters() {
+  router.push({ path: '/' });
+  genreList.value = [];
+}
 </script>

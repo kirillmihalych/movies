@@ -18,7 +18,7 @@ interface IGenres {
   genres: IGenre[];
 }
 
-interface ISelectItem {
+export interface ISelectItem {
   label: string;
   value: string;
 }
