@@ -10,11 +10,10 @@
   --ui-radius: 0;
 }
 
-button,
-[role='button'] {
-  cursor: pointer;
-}
-
-:disabled {
-  cursor: default;
+@layer base {
+  button,
+  [role='button'] {
+    @apply cursor-pointer;
+    @apply disabled:cursor-not-allowed;
+  }
 }

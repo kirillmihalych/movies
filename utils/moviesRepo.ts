@@ -33,15 +33,25 @@ const language = 'ru-RU';
 export const moviesRepo = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
   const { $apiAbortController } = useNuxtApp();
 
-  async function getMovies(page: number, genre: string): Promise<IResult> {
+  async function getMovies(
+    page: number,
+    genre?: string,
+    adult?: boolean,
+    fromYear?: string,
+    toYear?: string
+  ): Promise<IResult> {
     const sort_by = 'popularity.desc';
     const with_genres = genre;
+    const include_adult = adult;
     return fetch(`/discover/movie`, {
       params: {
         sort_by,
         language,
         page,
         with_genres,
+        include_adult,
+        'primary_release_date.gte': fromYear,
+        'primary_release_date.lte': toYear,
       },
     });
   }
