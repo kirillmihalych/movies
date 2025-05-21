@@ -3,7 +3,7 @@
 @import '@nuxt/ui';
 
 @theme {
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-sans: 'JetBrains Mono', monospace;
 }
 
 :root {

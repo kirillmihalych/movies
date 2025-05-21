@@ -1,7 +1,7 @@
 <template>
   <UApp>
     <NuxtLoadingIndicator />
-    <div class="font-mono max-w-[1440px] mx-auto lg:px-4">
+    <div class="max-w-[1440px] mx-auto lg:px-4">
       <h1 class="underline">
         <NuxtLink to="/">Movies Мувис</NuxtLink>
       </h1>
