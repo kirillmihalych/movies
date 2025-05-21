@@ -1,16 +1,35 @@
 <template>
-  <div>
-    <p class="mb-4">{{ title }}</p>
-    <div class="flex justify-between">
-      <UInput v-model="fromYear" placeholder="От" />
-      <UInput v-model="toYear" placeholder="До" />
-    </div>
-  </div>
+  <UCollapsible default-open>
+    <UButton
+      class="group px-0 hover:bg-neutral hover:text-primary font-bold"
+      label="Год"
+      color="neutral"
+      variant="ghost"
+      size="xl"
+      trailing-icon="i-lucide-chevron-down"
+      :ui="{
+        trailingIcon:
+          'group-data-[state=open]:rotate-180 transition-transform duration-200',
+      }"
+      block
+    />
+
+    <template #content>
+      <div class="flex justify-between items-center gap-4">
+        <div>
+          <p class="opacity-50 mb-1">от</p>
+          <UInput v-model="fromYear" variant="soft" />
+        </div>
+        <div>
+          <p class="opacity-50 mb-1">до</p>
+          <UInput v-model="toYear" variant="soft" />
+        </div>
+      </div>
+    </template>
+  </UCollapsible>
 </template>
 
 <script setup lang="ts">
-const title = 'Год';
-
 const fromYear = ref('');
 const toYear = ref('');
 
