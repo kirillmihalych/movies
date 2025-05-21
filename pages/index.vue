@@ -11,18 +11,43 @@
     <div v-if="pending">Loading...</div>
     <div v-else-if="error">{{ error }}</div>
     <div v-else-if="data">
+      <UCollapsible class="flex flex-col gap-2 w-48">
+        <UButton
+          class="group"
+          label="Жанр"
+          color="neutral"
+          variant="subtle"
+          trailing-icon="i-lucide-chevron-down"
+          :ui="{
+            trailingIcon:
+              'group-data-[state=open]:rotate-180 transition-transform duration-200',
+          }"
+          block
+        />
+        <template #content>
+          <div
+            class="h-[150px] pb-2"
+            :class="[isShowAll ? 'overflow-y-scroll' : 'overflow-hidden']"
+          >
+            <UInput
+              v-if="isShowAll"
+              v-model="genreFilter"
+              placeholder="Найти в списке"
+              class="pb-2 pr-2"
+            />
+            <UCheckboxGroup v-model="genreList" :items="displayedGenres" />
+            <UButton
+              v-if="!isShowAll"
+              trailing-icon="i-lucide-chevron-down"
+              variant="ghost"
+              @click="isShowAll = true"
+              >показать все</UButton
+            >
+          </div>
+        </template>
+      </UCollapsible>
+      <!--  -->
       <UButton @click="resetFilters">Сбросить фильтры</UButton>
-      <USelectMenu
-        v-model="genreList"
-        :items="data.genres"
-        multiple
-        placeholder="Жанр"
-        :ui="{
-          trailingIcon:
-            'group-data-[state=open]:rotate-180 transition-transform duration-200',
-        }"
-        class="w-48"
-      />
       <ul
         class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-10 gap-4 px-2 py-4"
       >
@@ -53,7 +78,6 @@
 
 <script setup lang="ts">
 import { useRouteQuery } from '@vueuse/router';
-import type { ISelectItem } from '#imports';
 
 const router = useRouter();
 
@@ -68,7 +92,9 @@ function to(page: number) {
 }
 
 const genre = useRouteQuery('genre', '', { transform: String });
-const genreList = ref<ISelectItem[]>([]);
+const genreList = ref<string[]>([]);
+const isShowAll = ref(false);
+const genreFilter = ref('');
 
 const { $apiFetcher } = useNuxtApp();
 const img = 'https://image.tmdb.org/t/p/';
@@ -88,20 +114,26 @@ const { pending, error, data } = await useAsyncData(
     watch: [page, genre],
   }
 );
+const displayedGenres = computed(() => {
+  const genres = isShowAll.value
+    ? data.value?.genres
+    : data.value?.genres.slice(0, 5);
+  return genres?.filter((genre) => genre.label.includes(genreFilter.value));
+});
 
 watch(
   genreList,
   () => {
-    genre.value = genreList.value.map((genre) => genre.value).toString();
     page.value = 1;
+    if (genreList.value.length) {
+      genre.value = genreList.value.toString();
+    }
 
     // если лист жанров пустой, но в query есть жанры
     // то берём жанры из query
     if (!genreList.value.length && genre.value) {
       const queryParams = genre.value.split(',');
-      genreList.value = data.value?.genres.filter((genre) =>
-        queryParams.includes(genre.value)
-      ) as ISelectItem[];
+      genreList.value = queryParams;
     }
   },
   { immediate: true }
