@@ -1,9 +1,10 @@
 <template>
   <UCollapsible default-open class="flex flex-col gap-2 w-full">
     <UButton
-      class="group"
+      class="group font-bold px-0 hover:bg-neutral hover:text-primary"
       label="Жанр"
       color="neutral"
+      size="xl"
       variant="ghost"
       trailing-icon="i-lucide-chevron-down"
       :ui="{
@@ -21,6 +22,7 @@
           v-if="isShowAll"
           v-model="genreFilter"
           placeholder="Найти в списке"
+          variant="soft"
           class="pb-2 pr-2"
         />
         <UCheckboxGroup v-model="selectedGenres" :items="displayedGenres" />
@@ -28,6 +30,7 @@
           v-if="!isShowAll"
           trailing-icon="i-lucide-chevron-down"
           variant="ghost"
+          class="px-0 hover:bg-neutral"
           @click="isShowAll = true"
           >показать все</UButton
         >

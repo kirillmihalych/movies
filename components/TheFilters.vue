@@ -7,8 +7,8 @@
     <template #body>
       <div class="flex flex-col gap-4">
         <AdultFilter />
-        <GenreFilter />
         <YearFilter />
+        <GenreFilter />
         <UButton @click="() => $emit('applyFilters')">Применить</UButton>
       </div>
     </template>
